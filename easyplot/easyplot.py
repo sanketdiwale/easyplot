@@ -5,11 +5,13 @@ Author: Sudeep Mandal
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.gridspec as gridspec
 
 if not plt.isinteractive():
-    print("\nMatplotlib interactive mode is currently OFF. It is "
+    print("\nMatplotlib interactive mode was currently OFF. It is "
           "recommended to use a suitable matplotlib backend and turn it "
-          "on by calling matplotlib.pyplot.ion()\n")
+          "on by calling matplotlib.pyplot.ion()\n. Turning it on automatically now...")
+    plt.ion()
 
 class EasyPlot(object):
     """
@@ -75,6 +77,7 @@ class EasyPlot(object):
         """
         self._default_kwargs = {'fig': None,
                                 'ax': None,
+                                'gs':None,
                                 'figsize': None,
                                 'dpi': mpl.rcParams['figure.dpi'],
                                 'showlegend': False,
@@ -141,6 +144,8 @@ class EasyPlot(object):
         ax, fig = self.kwargs['ax'], self.kwargs['fig']
         
         ax.ticklabel_format(useOffset=False) # Prevent offset notation in plots
+        if 'fontsize' in self.kwargs:
+            self.set_fontsize(self.kwargs['fontsize'])
 
         # Apply axes functions if present in kwargs
         for kwarg in self.kwargs:
@@ -165,9 +170,6 @@ class EasyPlot(object):
             leg = ax.legend(**legend_kwargs)
             if leg is not None:
                 leg.draggable(state=True)
-        
-        if 'fontsize' in self.kwargs:
-            self.set_fontsize(self.kwargs['fontsize'])
             
         self._delete_uniqueparams() # Clear unique parameters from kwargs list
         
@@ -249,6 +251,15 @@ class EasyPlot(object):
                 self.add_plot(x_loop, y[ind], **loop_kwargs)
         else:
             print('Error! Incorrect mode specification. Ignoring method call')
+
+    def make_subplots(self,*args, **kwargs):
+        if self.kwargs['fig'] is None:
+            self.kwargs['fig'] = plt.figure(figsize=self.kwargs['figsize'], 
+                                            dpi=self.kwargs['dpi'])
+        self.kwargs['gs'] = gridspec.GridSpec(*args, **kwargs)
+
+    def set_subplot(self,rows,cols):
+        self.kwargs['ax'] = plt.subplot(self.kwargs['gs'][rows,cols])
 
     def autoscale(self, enable=True, axis='both', tight=None):
         """Autoscale the axis view to the data (toggle).
