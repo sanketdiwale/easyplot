@@ -146,6 +146,8 @@ class EasyPlot(object):
         ax.ticklabel_format(useOffset=False) # Prevent offset notation in plots
         if 'fontsize' in self.kwargs:
             self.set_fontsize(self.kwargs['fontsize'])
+            ax.yaxis.label.set_size(self.kwargs['fontsize'])
+            ax.xaxis.label.set_size(self.kwargs['fontsize'])
 
         # Apply axes functions if present in kwargs
         for kwarg in self.kwargs:
@@ -315,18 +317,21 @@ class EasyPlot(object):
     
     def set_fontsize(self, font_size):
         """ Updates global font size for all plot elements"""
-        mpl.rcParams['font.size'] = font_size
-        self.redraw()
+        # mpl.rcParams['font.size'] = font_size
+        # mpl.rcParams['axes.labelsize'] = font_size
+        # self.redraw()
         #TODO: Implement individual font size setting
-#        params = {'font.family': 'serif',
-#          'font.size': 16,
-#          'axes.labelsize': 18,
-#          'text.fontsize': 18,
-#          'legend.fontsize': 18,
-#          'xtick.labelsize': 18,
-#          'ytick.labelsize': 18,
-#          'text.usetex': True}
-#        mpl.rcParams.update(params)
+        params = {'font.family': 'serif',
+            'font.size': font_size,
+            'axes.labelsize': font_size,
+            'text.fontsize': font_size,
+            'legend.fontsize': font_size,
+            'xtick.labelsize': font_size,
+            'ytick.labelsize': font_size,
+            #'text.usetex': True
+            }
+        mpl.rcParams.update(params)
+        self.redraw()
     
 #    def set_font(self, family=None, weight=None, size=None):
 #        """ Updates global font properties for all plot elements
@@ -379,3 +384,6 @@ class EasyPlot(object):
         self.kwargs['ax'] = None
         if reset:
             self.kwargs = self._default_kwargs.copy()
+
+    def savefig(self,*args,**kwargs):
+        plt.savefig(*args,**kwargs)
