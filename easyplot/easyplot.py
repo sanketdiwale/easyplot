@@ -83,7 +83,8 @@ class EasyPlot(object):
                                 'showlegend': False,
                                 'fancybox': True,
                                 'loc': 'best',
-                                'numpoints': 1
+                                'numpoints': 1,
+                                'return_handle':False
                                }
         # Dictionary of plot parameter aliases               
         self.alias_dict = {'lw': 'linewidth', 'ls': 'linestyle', 
@@ -177,6 +178,8 @@ class EasyPlot(object):
         
         if plt.isinteractive(): # Only redraw canvas in interactive mode
             self.redraw()
+        if self.kwargs['return_handle']:
+            return line
           
     def update_plot(self, **kwargs):
         """"Update plot parameters (keyword arguments) and replot figure
