@@ -390,7 +390,7 @@ class EasyPlot(object):
             self.kwargs = self._default_kwargs.copy()
 
     def savefig(self,*args,**kwargs):
-        plt.savefig(*args,**kwargs)
+        (self.kwargs['fig']).savefig(*args,**kwargs)
 
 class EasyPlotManager(EasyPlot):
     """docstring for EasyPlotManager"""
