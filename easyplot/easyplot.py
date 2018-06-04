@@ -408,8 +408,8 @@ class EasyPlotManager(EasyPlot):
         super(EasyPlotManager, self).__init__(*args, **kwargs)
         self.handles = {}
 
-    def adddata(self,label,data,style='bo',xlabel=r'$x$',ylabel=r'$y$',showlegend=False,markersize=10,alpha=1,linewidth=2.):
-        self.handles[label] = self.add_plot(data[0],data[1],style,label=label,showlegend=showlegend,markersize=markersize,alpha=alpha,xlabel=xlabel,ylabel=ylabel,linewidth=linewidth,return_handle=True)
+    def adddata(self,label,data,style='bo',xlabel=r'$x$',ylabel=r'$y$',showlegend=False,markersize=10,alpha=1,linewidth=2.,**kwargs):
+        self.handles[label] = self.add_plot(data[0],data[1],style,label=label,showlegend=showlegend,markersize=markersize,alpha=alpha,xlabel=xlabel,ylabel=ylabel,linewidth=linewidth,return_handle=True,**kwargs)
 
     def updatedata(self,label,data):
         (self.handles[label]).set_xdata(data[0])
