@@ -6,6 +6,7 @@ Author: Sudeep Mandal
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.gridspec as gridspec
+from mpl_toolkits.mplot3d.axes3d import Axes3D, get_test_data
 
 if not plt.isinteractive():
     print("\nMatplotlib interactive mode was currently OFF. It is "
@@ -84,7 +85,8 @@ class EasyPlot(object):
                                 'fancybox': True,
                                 'loc': 'best',
                                 'numpoints': 1,
-                                'return_handle':False
+                                'return_handle':False,
+                                'specialfunc': False
                                }
         # Dictionary of plot parameter aliases               
         self.alias_dict = {'lw': 'linewidth', 'ls': 'linestyle', 
@@ -105,6 +107,7 @@ class EasyPlot(object):
         # Mapping between plot parameter and corresponding axes function to call                  
         self._ax_funcs = {'xlabel': 'set_xlabel',
                           'ylabel': 'set_ylabel',
+                          'zlabel': 'set_zlabel',
                           'xlim': 'set_xlim',
                           'ylim': 'set_ylim',
                           'title': 'set_title',
@@ -163,7 +166,11 @@ class EasyPlot(object):
             plot_kwargs = {kwarg: self.kwargs[kwarg] for kwarg 
                                 in self._plot_kwargs if kwarg in self.kwargs}
             
-            line, = ax.plot(*self.args, **plot_kwargs)
+            if self.kwargs['specialfunc']:
+                if self.kwargs['specialfunc']=='scatter':
+                   line = ax.scatter(*self.args, **plot_kwargs)
+            else:
+                line, = ax.plot(*self.args, **plot_kwargs)
             self.line_list.append(line)            
           
         # Display legend if required
@@ -263,8 +270,11 @@ class EasyPlot(object):
                                             dpi=self.kwargs['dpi'])
         self.kwargs['gs'] = gridspec.GridSpec(*args, **kwargs)
 
-    def set_subplot(self,rows,cols):
+    def set_subplot(self,rows,cols,projection=None):
         self.kwargs['ax'] = plt.subplot(self.kwargs['gs'][rows,cols])
+        if not (projection is None):
+            self.kwargs['ax'].remove()
+            self.kwargs['ax'] = self.kwargs['fig'].add_subplot(self.kwargs['gs'][rows,cols],projection=projection)
 
     def autoscale(self, enable=True, axis='both', tight=None):
         """Autoscale the axis view to the data (toggle).
