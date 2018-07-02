@@ -5,9 +5,10 @@ Author: Sudeep Mandal
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import numpy as np
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.mplot3d.axes3d import Axes3D, get_test_data
-
+from IPython import embed
 if not plt.isinteractive():
     print("\nMatplotlib interactive mode was currently OFF. It is "
           "recommended to use a suitable matplotlib backend and turn it "
@@ -168,7 +169,9 @@ class EasyPlot(object):
             
             if self.kwargs['specialfunc']:
                 if self.kwargs['specialfunc']=='scatter':
-                   line = ax.scatter(*self.args, **plot_kwargs)
+                    plot_kwargs.pop('markersize',None)
+                    plot_kwargs.pop('linewidth',None)
+                    line = ax.scatter(*self.args, **plot_kwargs)
             else:
                 line, = ax.plot(*self.args, **plot_kwargs)
             self.line_list.append(line)            
@@ -409,11 +412,22 @@ class EasyPlotManager(EasyPlot):
         self.handles = {}
 
     def adddata(self,label,data,style='bo',xlabel=r'$x$',ylabel=r'$y$',showlegend=False,markersize=10,alpha=1,linewidth=2.,**kwargs):
-        self.handles[label] = self.add_plot(data[0],data[1],style,label=label,showlegend=showlegend,markersize=markersize,alpha=alpha,xlabel=xlabel,ylabel=ylabel,linewidth=linewidth,return_handle=True,**kwargs)
+        if len(data)==3:
+            self.handles[label] = self.add_plot(data[0],data[1],data[2],label=label,showlegend=showlegend,markersize=markersize,alpha=alpha,xlabel=xlabel,ylabel=ylabel,linewidth=linewidth,return_handle=True,**kwargs)
+        else:
+            self.handles[label] = self.add_plot(data[0],data[1],style,label=label,showlegend=showlegend,markersize=markersize,alpha=alpha,xlabel=xlabel,ylabel=ylabel,linewidth=linewidth,return_handle=True,**kwargs)
 
+    def remove(self,label):
+        self.handles[label].remove()
+        
     def updatedata(self,label,data):
-        (self.handles[label]).set_xdata(data[0])
-        (self.handles[label]).set_ydata(data[1])
+        try:
+            (self.handles[label]).set_xdata(data[0])
+            (self.handles[label]).set_ydata(data[1])
+        except:
+            # embed()
+            (self.handles[label]).set_offsets(np.vstack((data[0],data[1])).T)
+            (self.handles[label]).set_3d_properties(data[2],'z')
 
     def updateplot(self):
         # embed()
